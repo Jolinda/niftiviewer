@@ -27,7 +27,7 @@ def SliceView(data3d, plot_axis, view_axis, slice_number,
     """
     # thought I'd tested this and it worked? not working with pineapple_vibe.nii
  #   plot_axis.imshow(np.rot90(data3d.take(indices=slice_number, axis=view_axis)), **kwargs)
-    plot_data = np.array(data3d).take(indices=slice_number, axis=view_axis)
+    plot_data = np.asarray(data3d).take(indices=slice_number, axis=view_axis)
     if transparent:
         plot_data = np.ma.masked_where(plot_data == 0, plot_data)
 
@@ -45,6 +45,7 @@ def QuickView(niftipath, plot_array = [1,1], volno = 0, view_axis = 2, mag = 1,
         plot_array[1] = len(slices)
 
     img = nib.load(str(niftipath))
+    img = nib.as_closest_canonical(img)
     if len(img.shape) > 3:
         data = img.dataobj[:,:,:,volno]
     else:
@@ -65,7 +66,7 @@ def QuickView(niftipath, plot_array = [1,1], volno = 0, view_axis = 2, mag = 1,
     nrows = plot_array[0]
     ncols = plot_array[1]
     dpi = 72
-    stampsize = np.array(data.shape)*mag/dpi
+    stampsize = np.asarray(data.shape)*mag/dpi
     plt.figure(figsize=(stampsize[0]* ncols, stampsize[1]*nrows), dpi = dpi)
 
     nslices = nrows * ncols
@@ -94,6 +95,7 @@ def QuickView(niftipath, plot_array = [1,1], volno = 0, view_axis = 2, mag = 1,
 def Orthoview(niftipath, slices=[0,0,0], volno = 0, overlay = None, cmap = 'gray', **kwargs):
 
     img = nib.load(str(niftipath))
+    img = nib.as_closest_canonical(img)
     if len(img.shape) > 3:
         data = img.dataobj[:,:,:,volno]
     else:
@@ -106,7 +108,7 @@ def Orthoview(niftipath, slices=[0,0,0], volno = 0, overlay = None, cmap = 'gray
         else:
             overlay_data = overlay_img.dataobj
 
-    slice_indices = slices + np.array(img.shape[:3]) // 2
+    slice_indices = slices + np.asarray(img.shape[:3]) // 2
 
     aspect = []
     for view in range(0,3):
@@ -140,7 +142,7 @@ def ViewByIndices(niftipath, indices, ncols = None, sliceno = None,
     nrows = math.ceil(len(indices)/ncols)
 
     dpi = 72
-    stampsize = np.array(data.shape)*mag/dpi
+    stampsize = np.asarray(data.shape)*mag/dpi
     plt.figure(figsize=(stampsize[0]* ncols, stampsize[1]*nrows), dpi = dpi)
 
     for i,v in enumerate(indices):
@@ -226,7 +228,7 @@ def NewLoop(volumes, cmap = 'gray', sliceno = None, view = 'a', outfile = None, 
         tmpdir = tempfile.TemporaryDirectory()
 
     dpi = 72
-    stampsize = np.array(plotdata[0].shape)*mag/dpi
+    stampsize = np.asarray(plotdata[0].shape)*mag/dpi
     plt.figure(figsize=(stampsize[0]* nvols, 1), dpi = dpi)
 
     for v in range(0, nvols):
