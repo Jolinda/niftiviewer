@@ -92,7 +92,7 @@ def QuickView(niftipath, plot_array = [1,1], volno = 0, view_axis = 2, mag = 1,
         plt.savefig(outfile, bbox_inches = 'tight')
     plt.show()
 
-def Orthoview(niftipath, slices=[0,0,0], volno = 0, overlay = None, cmap = 'gray', **kwargs):
+def Orthoview(niftipath, slices=[0,0,0], volno = 0, overlay = None, cmap = 'gray', overlay_alpha=1.0, **kwargs):
 
     img = nib.load(str(niftipath))
     img = nib.as_closest_canonical(img)
@@ -103,6 +103,7 @@ def Orthoview(niftipath, slices=[0,0,0], volno = 0, overlay = None, cmap = 'gray
 
     if overlay:
         overlay_img = nib.load(str(overlay))
+        overlay_img = nib.as_closest_canonical(overlay_img)
         if len(img.shape) > 3:
             overlay_data = overlay_img.dataobj[:,:,:,volno]
         else:
@@ -122,7 +123,7 @@ def Orthoview(niftipath, slices=[0,0,0], volno = 0, overlay = None, cmap = 'gray
                   view_axis=i, aspect=aspect[i], cmap = cmap, **kwargs)
         if overlay:
             SliceView(overlay_data, plot_axis= ax, slice_number=slice_indices[i],
-                  view_axis=i, aspect=aspect[i], transparent = True, **kwargs)
+                  view_axis=i, aspect=aspect[i], transparent = True, **kwargs, alpha=overlay_alpha)
 
     plt.show()
 
