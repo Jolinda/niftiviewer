@@ -15,7 +15,7 @@ import os
 # need to test with rgb data
 # add overlay cmap parameter
 
-def SliceView(data3d, plot_axis, view_axis, slice_number, 
+def SliceView(data3d, view_axis, slice_number, plot_axis=None, 
     transparent = False, **kwargs):
     """
     Parameters
@@ -27,6 +27,8 @@ def SliceView(data3d, plot_axis, view_axis, slice_number,
     """
     # thought I'd tested this and it worked? not working with pineapple_vibe.nii
  #   plot_axis.imshow(np.rot90(data3d.take(indices=slice_number, axis=view_axis)), **kwargs)
+    if not plot_axis:
+        plot_axis=plt.gca()
     plot_data = np.asarray(data3d).take(indices=slice_number, axis=view_axis)
     if transparent:
         plot_data = np.ma.masked_where(plot_data == 0, plot_data)
